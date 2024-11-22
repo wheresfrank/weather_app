@@ -1,14 +1,4 @@
 <p style="color: green"><%= notice %></p>
-
-<h1>Weathers</h1>
-
-<div id="weathers">
-  <% @weathers.each do |weather| %>
-    <%= render weather %>
-    <p>
-      <%= link_to "Show this weather", weather %>
-    </p>
-  <% end %>
+<div class="section">
+  <h1 class="title">Weathers</h1>
 </div>
-
-<%= link_to "New weather", new_weather_path %>
