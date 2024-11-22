@@ -1,0 +1,25 @@
+<p style="color: green"><%= notice %></p>
+<div class="section pt-5">
+  <% if @forecast_data %>
+    <h2 class="subtitle has-text-weight-bold">5-Day Forecast in <%= @location %></h2>
+    <div class="columns">
+      <% @forecast_data.each do |forecast| %>
+        <div class="column box mb-5 has-text-centered">
+          <h2 class="subtitle mb-3"><%= forecast_date(forecast[:date]) %></h2>
+          <p class="has-text-primary is-size-5">High: <%= forcast_temp(forecast[:max_temp_f]) %></p>
+          <p class="has-text-primary is-size-5">Low: <%= forcast_temp(forecast[:max_temp_f]) %></p>
+          <p class="pt-3">Air quality: <%= air_quality(forecast[:air_quality]) %></p>
+          <p class="has-text-weight-semibold pt-3"><%= forecast[:condition] %></p>
+          <p>Chance of rain: <%= forecast[:chance_of_rain] %>%</p>
+          <div class="is-flex is-justify-content-center">
+            <figure class="image is-64x64">
+              <%= image_tag "https:#{forecast[:icon]}", alt: forecast[:condition] %>
+            </figure>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <h1 class="subtitle">We couldn't find weather information for that location. Please try again with a different location.</h1>
+  <% end %>
+</div>
