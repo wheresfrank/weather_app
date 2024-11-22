@@ -1,5 +1,5 @@
 class WeatherService
-    attr_reader :cached
+    attr_reader :cached, :location
 
     def initialize(location)
         @location = location
@@ -45,7 +45,6 @@ class WeatherService
                 forecast: forecast_data
             }
         else
-            # Return nil if data isn't found. This is used in the view to display a message to the user
             nil
         end
     rescue JSON::ParserError, Faraday::Error => e

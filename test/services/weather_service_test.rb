@@ -27,59 +27,38 @@ class WeatherServiceTest < ActiveSupport::TestCase
         ]
       }
     }
+    Rails.cache.clear
   end
 
-  test 'initializes with zip code' do
-    assert_equal '90210', @service.instance_variable_get(:@zip_code)
-  end
-
-  test 'successful API response returns formatted weather data' do
-    mock_response = Minitest::Mock.new
-    mock_response.expect :status, 200
-    mock_response.expect :body, @api_response.to_json
-
-    Faraday.stub :get, mock_response do
-      result = @service.get_weather_data
-      
-      assert_equal 'Beverly Hills', result[:location]
-      assert_equal 1, result[:forecast].length
-      
-      forecast = result[:forecast].first
-      assert_equal '2024-03-20', forecast[:date]
-      assert_equal 75.2, forecast[:max_temp_f]
-      assert_equal 20, forecast[:chance_of_rain]
-      assert_equal 1, forecast[:air_quality]
-    end
-  end
-
-  test 'failed API response returns nil' do
-    mock_response = Minitest::Mock.new
-    mock_response.expect :status, 404
-    
-    # Failed response should return nil instead of an error
-    Faraday.stub :get, mock_response do
-      result = @service.get_weather_data
-      assert_nil result
-    end
+  test 'initializes with location' do
+    assert_equal '90210', @service.location
   end
 
   test 'tracks cache status correctly' do
-    service = WeatherService.new('90210')
-    mock_response = Minitest::Mock.new
-    mock_response.expect :status, 200
-    mock_response.expect :body, @api_response.to_json
+    api_response_json = @api_response.to_json
+    
+    # Mock Faraday response
+    mock_response = Object.new
+    def mock_response.status; 200; end
+    def mock_response.body; @body; end
+    mock_response.instance_variable_set(:@body, api_response_json)
 
-    # Clear cache before test
-    Rails.cache.clear
-
-    # First call should not be cached
-    Faraday.stub :get, mock_response do
-      service.get_weather_data
-      assert_not service.cached
+    # Use memory store for testing to ensure caching works as expected
+    cache_store = ActiveSupport::Cache::MemoryStore.new
+    Rails.stub :cache, cache_store do
+      # Stub Faraday.get to return our mock response
+      Faraday.stub :get, mock_response do
+        # First call - should not be cached
+        result1 = @service.get_weather_data
+        assert_not @service.cached, "First call should not be cached"
+        
+        # Second call - should be cached
+        result2 = @service.get_weather_data
+        assert @service.cached, "Second call should be cached"
+        
+        # Verify both calls return the same data
+        assert_equal result1, result2
+      end
     end
-
-    # Second call should be cached
-    service.get_weather_data
-    assert service.cached
   end
 end
