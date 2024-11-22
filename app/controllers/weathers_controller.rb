@@ -2,10 +2,10 @@ class WeathersController < ApplicationController
 
   def index
     # Use zip code entered by user or a fallback zip code
-    zip_code = params[:zip_code] || "90210"
+    location = params[:location] || "90210"
  
     # Get weather data from weatherapi.com via WeatherService
-    weather_service = WeatherService.new(zip_code)
+    weather_service = WeatherService.new(location)
     weather_data = weather_service.get_weather_data
     
     if weather_data

@@ -1,15 +1,15 @@
 class WeatherService
     attr_reader :cached
 
-    def initialize(zip_code)
-        @zip_code = zip_code
+    def initialize(location)
+        @location = location
         @base_url = "https://api.weatherapi.com/v1/forecast.json?"
         @api_key = Rails.application.credentials.weather_api
         @cached = false
     end
 
     def get_weather_data
-        cache_key = "weather_#{@zip_code}"
+        cache_key = "weather_#{@location}"
         
         # Check if it exists in cache before fetching
         @cached = Rails.cache.exist?(cache_key)
@@ -24,7 +24,7 @@ class WeatherService
     private
 
     def fetch_from_api
-        response = Faraday.get("#{@base_url}key=#{@api_key}&q=#{@zip_code}&days=5&aqi=yes&alerts=yes")
+        response = Faraday.get("#{@base_url}key=#{@api_key}&q=#{@location}&days=5&aqi=yes&alerts=yes")
 
         if response.status == 200
             data = JSON.parse(response.body)
