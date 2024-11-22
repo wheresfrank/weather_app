@@ -1,4 +1,23 @@
 <p style="color: green"><%= notice %></p>
 <div class="section">
-  <h1 class="title">Weathers</h1>
+  <div class="container">
+    <h1 class="title">Weather Forecast</h1>
+    
+    <div class="box">
+      <%= form_with url: weathers_path, method: :get do |f| %>
+        <%= f.label :zip_code, "Enter ZIP Code or City", class: "label" %>
+        <div class="field has-addons">
+          <div class="control">
+            <%= f.text_field :zip_code, class: "input", required: true, placeholder: "e.g., 90210, Honolulu, HI" %>
+          </div>
+          <div class="control">
+            <%= f.submit "Get Weather", class: "button is-primary" %>
+          </div>
+        </div>
+      <% end %>
+      <%= turbo_frame_tag :weather_data do %>
+        <%= render "weather_data" %>
+      <% end %>
+    </div>
+  </div>
 </div>

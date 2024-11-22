@@ -16,12 +16,9 @@ class WeatherService
                     date: day['date'],
                     max_temp_f: day['day']['maxtemp_f'],
                     min_temp_f: day['day']['mintemp_f'],
-                    max_temp_c: day['day']['maxtemp_c'],
-                    min_temp_c: day['day']['mintemp_c'],
                     condition: day['day']['condition']['text'],
                     icon: day['day']['condition']['icon'],
                     chance_of_rain: day['day']['daily_chance_of_rain'],
-                    humidity: day['day']['avghumidity'],
                     air_quality: day['day']['air_quality']['us-epa-index']
                 }
             end
