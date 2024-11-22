@@ -41,6 +41,9 @@ gem "bootsnap", require: false
 # Bulma CSS Framework [https://github.com/joshuajansen/bulma-rails]
 gem "bulma-rails", "~> 1.0.0"
 
+# Faraday - Handle HTTP requests for APIs [https://github.com/lostisland/faraday]
+gem 'faraday'
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ]
