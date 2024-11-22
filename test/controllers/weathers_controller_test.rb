@@ -1,14 +1,8 @@
 require "test_helper"
 
 class WeathersControllerTest < ActionDispatch::IntegrationTest
-  test "should get index" do
-    get weathers_url
-    assert_response :success
-    assert_select "h1", "Weather Forecast"
-  end
-
-  test "should get index with zip code" do
-    mock_weather_data = {
+  setup do
+    @mock_weather_data = {
       location: "Beverly Hills",
       forecast: [
         {
@@ -22,11 +16,27 @@ class WeathersControllerTest < ActionDispatch::IntegrationTest
         }
       ]
     }
+  end
 
-    weather_service = Minitest::Mock.new
-    weather_service.expect :get_weather_data, mock_weather_data
+  test "should get index" do
+    # Create a mock service that returns our test data
+    mock_service = Minitest::Mock.new
+    mock_service.expect(:get_weather_data, @mock_weather_data)
+    mock_service.expect(:cached, false)
 
-    WeatherService.stub :new, weather_service do
+    WeatherService.stub :new, mock_service do
+      get weathers_url
+      assert_response :success
+      assert_select "h1", "Weather Forecast"
+    end
+  end
+
+  test "should get index with zip code" do
+    mock_service = Minitest::Mock.new
+    mock_service.expect(:get_weather_data, @mock_weather_data)
+    mock_service.expect(:cached, false)
+
+    WeatherService.stub :new, mock_service do
       get weathers_url, params: { zip_code: "90210" }
       assert_response :success
       assert_select "h2", /Beverly Hills/
@@ -34,10 +44,11 @@ class WeathersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should handle invalid location" do
-    weather_service = Minitest::Mock.new
-    weather_service.expect :get_weather_data, nil
+    mock_service = Minitest::Mock.new
+    mock_service.expect(:get_weather_data, nil)
+    mock_service.expect(:cached, false)
 
-    WeatherService.stub :new, weather_service do
+    WeatherService.stub :new, mock_service do
       get weathers_url, params: { zip_code: "invalid" }
       assert_response :success
       assert_select "h1", /couldn't find weather information/
