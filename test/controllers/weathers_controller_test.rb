@@ -25,6 +25,7 @@ class WeathersControllerTest < ActionDispatch::IntegrationTest
 
     weather_service = Minitest::Mock.new
     weather_service.expect :get_weather_data, mock_weather_data
+    weather_service.expect :cached, false
 
     WeatherService.stub :new, weather_service do
       get weathers_url, params: { zip_code: "90210" }

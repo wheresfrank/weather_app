@@ -11,13 +11,19 @@ class WeatherService
     def get_weather_data
         cache_key = "weather_#{@zip_code}"
         
-        # Check if data exists in cache before fetching
-        if Rails.cache.exist?(cache_key)
-            @cached = true
-            return Rails.cache.read(cache_key)
+        # Check if it exists in cache before fetching
+        @cached = Rails.cache.exist?(cache_key)
+        
+        # Use fetch to either return cached value or get new data
+        Rails.cache.fetch(cache_key, expires_in: 30.minutes) do
+            @cached = false
+            fetch_from_api
         end
+    end
 
-        # If not in cache, fetch from API and cache the result
+    private
+
+    def fetch_from_api
         response = Faraday.get("#{@base_url}key=#{@api_key}&q=#{@zip_code}&days=5&aqi=yes&alerts=yes")
 
         if response.status == 200
@@ -34,16 +40,16 @@ class WeatherService
                 }
             end
             
-            result = {
+            {
                 location: data['location']['name'],
                 forecast: forecast_data
             }
-
-            Rails.cache.write(cache_key, result, expires_in: 30.minutes)
-            @cached = false
-            result
         else
+            # Return nil if data isn't found. This is used in the view to display a message to the user
             nil
         end
+    rescue JSON::ParserError, Faraday::Error => e
+        Rails.logger.error("Weather API error: #{e.message}")
+        nil
     end
 end

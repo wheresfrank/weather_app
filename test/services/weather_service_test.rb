@@ -56,9 +56,30 @@ class WeatherServiceTest < ActiveSupport::TestCase
     mock_response = Minitest::Mock.new
     mock_response.expect :status, 404
     
+    # Failed response should return nil instead of an error
     Faraday.stub :get, mock_response do
       result = @service.get_weather_data
       assert_nil result
     end
+  end
+
+  test 'tracks cache status correctly' do
+    service = WeatherService.new('90210')
+    mock_response = Minitest::Mock.new
+    mock_response.expect :status, 200
+    mock_response.expect :body, @api_response.to_json
+
+    # Clear cache before test
+    Rails.cache.clear
+
+    # First call should not be cached
+    Faraday.stub :get, mock_response do
+      service.get_weather_data
+      assert_not service.cached
+    end
+
+    # Second call should be cached
+    service.get_weather_data
+    assert service.cached
   end
 end
