@@ -31,4 +31,4 @@ A Ruby on Rails application that provides weather forecasts for any location in 
 - Built with [Ruby on Rails](https://rubyonrails.org/)
 
 ## Check it out
-The application is available at `https://weather-app-lmfq.onrender.com` (It is hosted on a free instance, so it may take a few seconds to start on first load.)
+The application is available at [https://weather-app-lmfq.onrender.com](https://weather-app-lmfq.onrender.com) (It is hosted on a free instance, so it may take a few seconds to start on first load.)
