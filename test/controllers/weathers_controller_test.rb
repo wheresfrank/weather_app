@@ -1,48 +1,46 @@
 require "test_helper"
 
 class WeathersControllerTest < ActionDispatch::IntegrationTest
-  setup do
-    @weather = weathers(:one)
-  end
-
   test "should get index" do
     get weathers_url
     assert_response :success
+    assert_select "h1", "Weather Forecast"
   end
 
-  test "should get new" do
-    get new_weather_url
-    assert_response :success
-  end
+  test "should get index with zip code" do
+    mock_weather_data = {
+      location: "Beverly Hills",
+      forecast: [
+        {
+          date: "2024-03-20",
+          max_temp_f: 75.2,
+          min_temp_f: 60.8,
+          condition: "Sunny",
+          icon: "//cdn.weatherapi.com/weather/64x64/day/113.png",
+          chance_of_rain: 20,
+          air_quality: 1
+        }
+      ]
+    }
 
-  test "should create weather" do
-    assert_difference("Weather.count") do
-      post weathers_url, params: { weather: {  } }
+    weather_service = Minitest::Mock.new
+    weather_service.expect :get_weather_data, mock_weather_data
+
+    WeatherService.stub :new, weather_service do
+      get weathers_url, params: { zip_code: "90210" }
+      assert_response :success
+      assert_select "h2", /Beverly Hills/
     end
-
-    assert_redirected_to weather_url(Weather.last)
   end
 
-  test "should show weather" do
-    get weather_url(@weather)
-    assert_response :success
-  end
+  test "should handle invalid location" do
+    weather_service = Minitest::Mock.new
+    weather_service.expect :get_weather_data, nil
 
-  test "should get edit" do
-    get edit_weather_url(@weather)
-    assert_response :success
-  end
-
-  test "should update weather" do
-    patch weather_url(@weather), params: { weather: {  } }
-    assert_redirected_to weather_url(@weather)
-  end
-
-  test "should destroy weather" do
-    assert_difference("Weather.count", -1) do
-      delete weather_url(@weather)
+    WeatherService.stub :new, weather_service do
+      get weathers_url, params: { zip_code: "invalid" }
+      assert_response :success
+      assert_select "h1", /couldn't find weather information/
     end
-
-    assert_redirected_to weathers_url
   end
 end
