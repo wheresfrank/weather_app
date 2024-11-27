@@ -18,7 +18,7 @@
         <div class="column box mb-5 has-text-centered">
           <h2 class="subtitle mb-3"><%= forecast_date(forecast[:date]) %></h2>
           <p class="has-text-primary is-size-5">High: <%= forcast_temp(forecast[:max_temp_f]) %></p>
-          <p class="has-text-primary is-size-5">Low: <%= forcast_temp(forecast[:max_temp_f]) %></p>
+          <p class="has-text-primary is-size-5">Low: <%= forcast_temp(forecast[:min_temp_f]) %></p>
           <p class="pt-3">Air quality: <%= air_quality(forecast[:air_quality]) %></p>
           <p class="has-text-weight-semibold pt-3"><%= forecast[:condition] %></p>
           <p>Chance of rain: <%= forecast[:chance_of_rain] %>%</p>
