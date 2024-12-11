@@ -24,7 +24,7 @@ class WeatherService
     private
 
     def fetch_from_api
-        response = Faraday.get("#{@base_url}key=#{@api_key}&q=#{@location}&days=5&aqi=yes&alerts=yes")
+        response = Faraday.get("#{@base_url}key=#{@api_key}&q=#{@location}&days=3")
 
         if response.status == 200
             data = JSON.parse(response.body)
@@ -35,8 +35,7 @@ class WeatherService
                     min_temp_f: day['day']['mintemp_f'],
                     condition: day['day']['condition']['text'],
                     icon: day['day']['condition']['icon'],
-                    chance_of_rain: day['day']['daily_chance_of_rain'],
-                    air_quality: day['day']['air_quality']['us-epa-index']
+                    chance_of_rain: day['day']['daily_chance_of_rain']
                 }
             end
             

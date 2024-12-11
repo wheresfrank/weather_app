@@ -3,7 +3,7 @@
   <% if @forecast_data %>
     <div class="level">
       <div class="level-left">
-        <h2 class="subtitle has-text-weight-bold">5-Day Forecast in <%= @location %></h2>
+        <h2 class="subtitle has-text-weight-bold">3-Day Forecast in <%= @location %></h2>
       </div>
       <div class="level-right">
         <% if @cached %>
@@ -19,7 +19,6 @@
           <h2 class="subtitle mb-3"><%= forecast_date(forecast[:date]) %></h2>
           <p class="has-text-primary is-size-5">High: <%= forcast_temp(forecast[:max_temp_f]) %></p>
           <p class="has-text-primary is-size-5">Low: <%= forcast_temp(forecast[:min_temp_f]) %></p>
-          <p class="pt-3">Air quality: <%= air_quality(forecast[:air_quality]) %></p>
           <p class="has-text-weight-semibold pt-3"><%= forecast[:condition] %></p>
           <p>Chance of rain: <%= forecast[:chance_of_rain] %>%</p>
           <div class="is-flex is-justify-content-center">
